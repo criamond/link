@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ShortURLController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+
+Route::get('/{shortCode}', [ShortURLController::class, 'redirect']);
+
+/*Route::get('/', function () {
     return view('welcome');
-});
+});*/
+
+

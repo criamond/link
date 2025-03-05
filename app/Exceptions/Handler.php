@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -27,4 +31,42 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    public function render($request, Throwable $exception)
+    {
+            if ($exception instanceof ValidationException) {
+                return response()->json([
+                    'error' => 'Validation Error',
+                    'message' => $exception->validator->errors(),
+                ], 400);
+            }
+
+            if ($exception instanceof ModelNotFoundException) {
+                return response()->json([
+                    'error' => 'Not Found',
+                    'message' => 'The requested resource was not found',
+                ], 404);
+            }
+
+            if ($exception instanceof AuthenticationException) {
+                return response()->json([
+                    'error' => 'Unauthenticated',
+                    'message' => 'You need to be logged in to access this resource',
+                ], 401);
+            }
+
+            if ($exception instanceof AuthorizationException) {
+                return response()->json([
+                    'error' => 'Forbidden',
+                    'message' => 'You are not allowed to access this resource',
+                ], 403);
+            }
+
+            return response()->json([
+                'error' => 'Other Error',
+                'message' => $exception->getMessage(),
+            ], $exception->getCode());
+
+    }
+
 }
