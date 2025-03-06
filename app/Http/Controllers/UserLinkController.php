@@ -18,11 +18,11 @@ class UserLinkController extends Controller
     public function getAllLinks(GetAllLinksRequest $request): JsonResponse
     {
 
-        $user_id = $user_id ?? null;
+        $user_id = $request->user_id ?? null;
         $user    = Auth::user();
 
         if ($user->role == 1) {
-            $links = ($user_id) ? Link::all() : Link::where('user_id', $user_id)->get();
+            $links = (!$user_id) ? Link::all() : Link::where('user_id', $user_id)->get();
         } else {
             if ($user_id and $user_id != $user->id) {
                 throw new AuthorizationException("You are not allowed to access to links of other users");
@@ -33,30 +33,33 @@ class UserLinkController extends Controller
         return response()->json($links, 200);
     }
 
-    public function update(UpdateLinkRequest $request, $shortCode): JsonResponse
+    public function update(UpdateLinkRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'original_url' => 'required|url',
-            'short_code'   => 'nullable|string|unique',
-        ]);
+
 
         $user = Auth::user();
 
-        $link = Link::where('short_code', $shortCode);
+        $link = Link::where('short_code', $request->shortCode);
+
+
 
         if ($user->role != 1) {
 
             $link->where('user_id', $user->id);
         }
 
-        $link->first();
+        $link=$link->first();
 
         if (!$link) {
             throw new NotFoundHttpException('Link not found.');
         }
 
 
-        $link->update($validated);
+        $newOriginalUrl = $request->input('original_url');
+        $newShortCode = $request->input('new_short_code')??$link->short_code;
+
+
+        $link->update(['original_url'=>$newOriginalUrl,'short_code'=>$newShortCode]);
 
         return response()->json(['message' => 'Link updated successfully'], 200);
     }

@@ -61,11 +61,15 @@ class Handler extends ExceptionHandler
                     'message' => 'You are not allowed to access this resource',
                 ], 403);
             }
+            $code=$exception->getCode();
+            if($code==0) {
+                $code = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 410;
+            }
 
             return response()->json([
                 'error' => 'Other Error',
                 'message' => $exception->getMessage(),
-            ], $exception->getCode());
+            ], $code);
 
     }
 

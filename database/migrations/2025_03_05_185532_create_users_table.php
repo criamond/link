@@ -22,18 +22,10 @@ return new class extends Migration {
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            $table->string('role')->default(null);
+            $table->string('role')->nullable()->default(null);
         });
 
 
-        DB::table('users')->insert([
-            'id'         => 1,
-            'name'       => 'Anonymous',
-            'email'      => null,
-            'password'   => Hash::make(Str::random(255)), // Random secure password
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
 
     }
 

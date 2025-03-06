@@ -36,7 +36,7 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/link/{shortCode}', [UserLinkController::class, 'update']);
 
     Route::get('/stats/{shortCode}', [ShortURLController::class, 'stats']);
-    Route::delete('/delete/{shortCode}', [ShortURLController::class, 'destroy']);
+    Route::delete('/delete_link/{shortCode}', [ShortURLController::class, 'destroy']);
 
 });
 

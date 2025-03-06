@@ -15,6 +15,13 @@ class VerifyEmailRequest extends FormRequest
         return true;
     }
 
+    public function prepareForValidation()
+    {
+        $this->merge([
+            'token' => $this->route('token'),
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

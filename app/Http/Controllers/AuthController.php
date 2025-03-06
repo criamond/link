@@ -10,7 +10,6 @@ use App\Mail\EmailVerificationMail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -23,12 +22,6 @@ class AuthController extends Controller
 {
     public function register(RegisterUserRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|min:6',
-            'role'     => 'int|min:0|max:1',
-        ]);
 
         $role = $request->role ?? null;
 
@@ -74,17 +67,6 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        /*try {
-            if (!$token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'Unauthorized'], 401);
-            }
-        } catch (JWTException $e) {
-            return response()->json(['error' => 'Could not create token'], 500);
-        }*/
-
-        //return response()->json(compact('token'));
-
-
         if (!$token = Auth::attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
@@ -98,28 +80,6 @@ class AuthController extends Controller
         return $this->respondWithToken((string)$token);
     }
 
-    /*public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-
-            if (!$user->email_verified_at) {
-                return response()->json(['message' => 'Please verify your email before logging in.'], 403);
-            }
-
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            return response()->json(['access_token' => $token, 'token_type' => 'Bearer'], 200);
-        }
-
-        return response()->json(['message' => 'Invalid credentials'], 401);
-    }
-    */
 
     protected function respondWithToken(string $token): JsonResponse
     {
@@ -132,12 +92,17 @@ class AuthController extends Controller
         ]);
     }
 
+
+
     public function refresh(): JsonResponse
     {
-        $refreshToken = Auth::refresh(Cookie::get('token'));
+
 
         try {
-            $newAccessToken = JWTAuth::setToken($refreshToken)->refresh(); // Обновляем токен
+
+            $refreshToken = Auth::refresh();
+
+            $newAccessToken = JWTAuth::setToken($refreshToken)->refresh();
 
             return $this->respondWithToken($newAccessToken);
         } catch (TokenInvalidException $e) {

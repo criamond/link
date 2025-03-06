@@ -19,7 +19,7 @@ class PasswordResetController extends Controller
             : response()->json(['error' => __($status)], 400);
     }
 
-    public function resetPassword(ResetPasswordRequest $request)
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
         $status = Password::reset($request->only('email', 'token', 'password', 'password_confirmation'), function ($user, $password) {
             $user->password = bcrypt($password);
