@@ -158,9 +158,20 @@
     const linksTable = document.getElementById('linksTable').querySelector('tbody');
     const usersTable = document.getElementById('usersTable').querySelector('tbody');
     const logoutButton = document.getElementById('logoutButton');
+    const shortenPublic = document.getElementById('shortenPublic');
 
     let authToken = null;
     let refreshToken = null;
+
+
+    function checkAuthStatus() {
+        if (authToken) {
+            shortenPublic.style.display = 'none'; // Скрыть публичный шортенер
+        } else {
+            shortenPublic.style.display = 'block'; // Показать для незалогиненных
+        }
+    }
+
 
     async function apiRequest(endpoint, method = 'GET', body = null) {
         const headers = {
@@ -314,6 +325,7 @@
 
             auth.style.display = 'none';
             userPanel.style.display = 'block';
+            checkAuthStatus();
 
             if (isAdmin) {
                 adminPanel.style.display = 'block';
