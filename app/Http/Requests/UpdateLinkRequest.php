@@ -14,8 +14,8 @@ class UpdateLinkRequest extends FormRequest
     public function rules()
     {
         return [
-            'original_url' => 'url',
-            'new_short_code'=> 'string'
+            'original_url'   => 'url',
+            'new_short_code' => 'string',
         ];
     }
 }

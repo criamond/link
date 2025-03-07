@@ -37,6 +37,7 @@ class AdminController extends Controller
 
     public function deleteUser(DestroyUserRequest $request): JsonResponse
     {
+
         $user = User::find($request->id);
 
         if (!$user) {

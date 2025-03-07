@@ -17,8 +17,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/{shortCode}', [ShortURLController::class, 'redirect']);
 
-/*Route::get('/', function () {
-    return view('welcome');
-});*/
+
 
 

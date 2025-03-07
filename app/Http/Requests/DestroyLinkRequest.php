@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 
-class DestroyLinkRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class DestroyLinkRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,16 +15,20 @@ class DestroyLinkRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+
     public function rules(): array
     {
         return [
-            'shortCode' => 'required|string',
+            'short_code' => 'required|string',
         ];
+    }
+
+
+    public function validationData()
+    {
+        $this->merge(['short_code' => $this->route('short_code')]);
+
+        return parent::validationData();
     }
 
 }

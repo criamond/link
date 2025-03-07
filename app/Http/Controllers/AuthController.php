@@ -23,9 +23,9 @@ class AuthController extends Controller
     public function register(RegisterUserRequest $request): JsonResponse
     {
 
-        $role = $request->role ?? null;
+        $role = $request->role ?? false;
 
-        if (($role == 1) && User::where('role', 1)) {
+        if (($role) && User::where('role', 1)->first()) {
 
             throw new AccessDeniedHttpException('Can not create another admin', null, 403);
 
@@ -38,7 +38,7 @@ class AuthController extends Controller
             'email'              => $request->email,
             'password'           => Hash::make($request->password),
             'verification_token' => $verificationToken,
-            'role'               => $role,
+            'role'               => $role ? 1 : 0,
         ]);
 
         Mail::to($user->email)->send(new EmailVerificationMail($user));
@@ -77,21 +77,29 @@ class AuthController extends Controller
             return response()->json(['message' => 'Please verify your email before logging in.'], 403);
         }
 
-        return $this->respondWithToken((string)$token);
+        if ($user->role == 1) {
+            return $this->respondWithToken((string)$token, 1);
+        } else {
+            return $this->respondWithToken((string)$token);
+        }
     }
 
 
-    protected function respondWithToken(string $token): JsonResponse
+    protected function respondWithToken(string $token, $is_admin = null): JsonResponse
     {
-        return response()->json([
+        $result = [
             'access_token'  => $token,
             'refresh_token' => JWTAuth::fromUser(Auth::user()),
             'token_type'    => 'bearer',
             'expires_in'    => Auth::factory()->getTTL() * 60,
             'refresh_ttl'   => config('jwt.refresh_ttl'),
-        ]);
-    }
+        ];
+        if ($is_admin) {
+            $result['is_admin'] = 1;
+        }
 
+        return response()->json($result);
+    }
 
 
     public function refresh(): JsonResponse
@@ -108,12 +116,5 @@ class AuthController extends Controller
         } catch (TokenInvalidException $e) {
             return response()->json(['error' => 'Invalid refresh token'], 401);
         }
-    }
-
-    public function logout(): JsonResponse
-    {
-        Auth::logout();
-
-        return response()->json(['message' => 'Successfully logged out']);
     }
 }

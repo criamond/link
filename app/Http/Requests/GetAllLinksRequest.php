@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class GetAllLinksRequest extends FormRequest
@@ -18,12 +17,18 @@ class GetAllLinksRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, FormRequest|array|string>
      */
     public function rules(): array
     {
         return [
-            'user_id' => 'string',
+            'user_id' => 'nullable|integer|exists:users,id',
         ];
+    }
+
+
+    public function validationData()
+    {
+        return array_merge($this->all(), ['user_id' => $this->route('user_id')]);
     }
 }

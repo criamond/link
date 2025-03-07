@@ -28,21 +28,21 @@ Route::post('/refresh', [AuthController::class, 'refresh']);
 
 
 Route::post('/password/email', [PasswordResetController::class, 'sendResetLink']);
-Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
+Route::post('/password/reset', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('/get-all-links/{user_id?}', [UserLinkController::class, 'getAllLinks']);
-    Route::get('/logout', [AuthController::class, 'logout']);
-    Route::put('/link/{shortCode}', [UserLinkController::class, 'update']);
 
-    Route::get('/stats/{shortCode}', [ShortURLController::class, 'stats']);
-    Route::delete('/delete_link/{shortCode}', [ShortURLController::class, 'destroy']);
+    //Route::get('/get-all-links/', [UserLinkController::class, 'getAllLinks']);
+    Route::get('/get-all-links/{user_id?}', [UserLinkController::class, 'getAllLinks']);
+    Route::get('/get-all-links/{user_id?}', [UserLinkController::class, 'getAllLinks']);
+    Route::put('/link/', [UserLinkController::class, 'update']);
+
+    Route::delete('/delete_link/{short_code}', [UserLinkController::class, 'destroy']);
 
 });
 
 Route::middleware(['auth:api', 'admin'])->group(function () {
     Route::get('/admin/users', [AdminController::class, 'listUsers']);
-    Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
-    Route::delete('/admin/links/{id}', [AdminController::class, 'deleteLink']);
+    Route::delete('/admin/delete-user/{id}', [AdminController::class, 'deleteUser']);
 });
 

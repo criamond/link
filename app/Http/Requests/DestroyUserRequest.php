@@ -23,7 +23,12 @@ class DestroyUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|int',
+            'id' => 'required|integer|exists:users,id',
         ];
+    }
+
+    public function validationData()
+    {
+        return array_merge($this->all(), ['id' => $this->route('id')]);
     }
 }

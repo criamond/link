@@ -19,12 +19,14 @@ class User extends Authenticatable implements JWTSubject
             'password',
             'verification_token',
             "email_verified_at",
+            "role",
         ];
 
     protected $hidden
         = [
             'password',
             'remember_token',
+            'verification_token',
         ];
 
 
@@ -34,7 +36,6 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Получить указанные данные для JWT.
      *
      * @return array
      */

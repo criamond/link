@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DestroyLinkRequest;
 use App\Http\Requests\GetAllLinksRequest;
 use App\Http\Requests\UpdateLinkRequest;
 use App\Models\Link;
@@ -42,13 +43,12 @@ class UserLinkController extends Controller
         $link = Link::where('short_code', $request->shortCode);
 
 
-
         if ($user->role != 1) {
 
             $link->where('user_id', $user->id);
         }
 
-        $link=$link->first();
+        $link = $link->first();
 
         if (!$link) {
             throw new NotFoundHttpException('Link not found.');
@@ -56,12 +56,30 @@ class UserLinkController extends Controller
 
 
         $newOriginalUrl = $request->input('original_url');
-        $newShortCode = $request->input('new_short_code')??$link->short_code;
+        $newShortCode   = $request->input('new_short_code') ?? $link->short_code;
 
 
-        $link->update(['original_url'=>$newOriginalUrl,'short_code'=>$newShortCode]);
+        $link->update(['original_url' => $newOriginalUrl, 'short_code' => $newShortCode]);
 
         return response()->json(['message' => 'Link updated successfully'], 200);
+    }
+
+
+    public function destroy(DestroyLinkRequest $request): JsonResponse
+    {
+        $user = Auth::user();
+        $link = Link::where('short_code', $request->input('short_code'));
+
+        if ($user->role != 1) {
+
+            $link = $link->where('user_id', $user->id);
+        }
+
+        $link = $link->firstOrFail();
+
+        $link->delete();
+
+        return response()->json(['message' => 'Link deleted successfully.']);
     }
 }
 
