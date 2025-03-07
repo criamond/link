@@ -20,7 +20,7 @@ class VerifyCsrfToken extends Middleware
 
     public function __construct(Application $app, Encrypter $encrypter)
     {
-        array_push($this->except, env('APP_DOMAIN'));
+        array_push($this->except, config('appsettings.app_domain'));
         parent::__construct($app, $encrypter);
     }
 }

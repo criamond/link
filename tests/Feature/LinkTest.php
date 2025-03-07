@@ -16,7 +16,7 @@ class LinkTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $response = $this->postJson('/api/shorten', [
+        $response = $this->postJson('/api/links', [
             'original_url' => 'https://example.com',
         ]);
 
@@ -30,7 +30,7 @@ class LinkTest extends TestCase
         $this->actingAs($user);
         $link = Link::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->deleteJson("/api/delete_link/{$link->short_code}");
+        $response = $this->deleteJson("/api/links/{$link->short_code}");
         $response->assertStatus(200);
         $this->assertDatabaseMissing('links', ['id' => $link->short_code]);
     }

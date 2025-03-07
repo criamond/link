@@ -63,7 +63,7 @@ class Handler extends ExceptionHandler
             }
             $code=$exception->getCode();
             if($code==0) {
-                $code = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 410;
+                $code = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500;
             }
 
             return response()->json([

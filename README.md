@@ -25,15 +25,19 @@ Link is a Laravel-based URL shortening API that allows users to create, manage, 
    ```sh
    cp .env.example .env
    ```
-4. Generate application key:
+   Add to .env APP_DOMAIN your domian for frontend application
+
+4. Configure your mail server in config/mail.php
+
+5. Generate application key:
    ```sh
    php artisan key:generate
    ```
-5. Run database migrations:
+6. Run database migrations:
    ```sh
    php artisan migrate
    ```
-6. Start the development server:
+7. Start the development server:
    ```sh
    php artisan serve
    ```
@@ -83,7 +87,7 @@ Link is a Laravel-based URL shortening API that allows users to create, manage, 
     - `url`: required, valid URL
 
 #### Get All Links for a User
-**GET** `/api/get-all-links/{user_id?}`
+**GET** `/api/links/{user_id?}`
 - Retrieves all links belonging to the authenticated user.
 - Can be accessed without `user_id` to fetch links for the logged-in user.
 
@@ -155,6 +159,5 @@ Unit tests are located in `tests/Feature/` and `tests/Unit/` directories. They c
 - User registration and authentication (`tests/Feature/AuthTest.php`)
 - Link creation, retrieval, updating, and deletion (`tests/Feature/LinkTest.php`)
 - Password reset functionality (`tests/Feature/PasswordResetTest.php`)
-- Validation tests for all request classes (`tests/Unit/ValidationTest.php`)
 
 

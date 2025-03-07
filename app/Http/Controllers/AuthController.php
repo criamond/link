@@ -104,8 +104,6 @@ class AuthController extends Controller
 
     public function refresh(): JsonResponse
     {
-
-
         try {
 
             $refreshToken = Auth::refresh();

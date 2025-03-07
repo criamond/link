@@ -15,7 +15,15 @@ class UpdateLinkRequest extends FormRequest
     {
         return [
             'original_url'   => 'url',
-            'new_short_code' => 'string',
+            'short_code' => 'string',
         ];
+    }
+
+
+    public function validationData()
+    {
+        $this->merge(['short_code' => $this->route('short_code')]);
+
+        return parent::validationData();
     }
 }

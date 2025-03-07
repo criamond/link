@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://link.loc','http://links.loc'],
+    'allowed_origins' => ['http://'.config('appsettings.app_domain')],
 
     'allowed_origins_patterns' => [],
 

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/shorten', [ShortURLController::class, 'store']);
+Route::post('/links', [ShortURLController::class, 'store']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -32,17 +32,15 @@ Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']
 
 Route::middleware('auth:api')->group(function () {
 
-    //Route::get('/get-all-links/', [UserLinkController::class, 'getAllLinks']);
-    Route::get('/get-all-links/{user_id?}', [UserLinkController::class, 'getAllLinks']);
-    Route::get('/get-all-links/{user_id?}', [UserLinkController::class, 'getAllLinks']);
-    Route::put('/link/', [UserLinkController::class, 'update']);
+    Route::get('/links/{user_id?}', [UserLinkController::class, 'getAllLinks']);
+    Route::put('/links/{short_code}', [UserLinkController::class, 'update']);
 
-    Route::delete('/delete_link/{short_code}', [UserLinkController::class, 'destroy']);
+    Route::delete('/links/{short_code}', [UserLinkController::class, 'destroy']);
 
 });
 
 Route::middleware(['auth:api', 'admin'])->group(function () {
     Route::get('/admin/users', [AdminController::class, 'listUsers']);
-    Route::delete('/admin/delete-user/{id}', [AdminController::class, 'deleteUser']);
+    Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
 });
 

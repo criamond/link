@@ -40,7 +40,7 @@ class UserLinkController extends Controller
 
         $user = Auth::user();
 
-        $link = Link::where('short_code', $request->shortCode);
+        $link = Link::where('short_code', $request->short_code);
 
 
         if ($user->role != 1) {
