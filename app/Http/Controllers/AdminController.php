@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DestroyUserRequest;
-use App\Http\Requests\UpdateUserRequest;
 use App\Models\Link;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -49,16 +48,4 @@ class AdminController extends Controller
         return response()->json(['message' => 'User deleted successfully']);
     }
 
-    public function updateUser(UpdateUserRequest $request): JsonResponse
-    {
-        $user = User::find($request->id);
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        $user->update($request->only('email', 'is_admin'));
-
-        return response()->json(['message' => 'User updated successfully', 'user' => $user]);
-    }
 }

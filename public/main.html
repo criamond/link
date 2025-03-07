@@ -64,6 +64,16 @@
 <div class="container">
     <h1>Link Shortener</h1>
 
+    <div id="shortenPublic">
+        <h2>Shorten a URL (No Login Required)</h2>
+        <form id="shortenPublicForm">
+            <input type="url" id="publicOriginalUrl" placeholder="Enter URL to shorten" required>
+            <input type="text" id="publicAlias" placeholder="Enter alias (optional)">
+            <button type="submit">Shorten URL</button>
+        </form>
+        <div class="links" id="publicLinksContainer"></div>
+    </div>
+
     <div id="auth">
         <form id="registerForm">
             <h2>Register</h2>
@@ -207,6 +217,50 @@
             refreshToken = null;
         }
     }
+
+
+    document.getElementById('shortenPublicForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const originalUrl = document.getElementById('publicOriginalUrl').value.trim();
+        const shortCode = document.getElementById('publicAlias').value.trim();
+
+        const requestBody = { original_url: originalUrl };
+        if (shortCode) {
+            requestBody.short_code = shortCode; // Добавляем только если не пусто
+        }
+
+        try {
+            const response = await fetch(`${apiUrl}/shorten`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                alert(error.message || 'Failed to shorten URL');
+                return;
+            }
+
+            const data = await response.json();
+            displayPublicLink(data);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while shortening the URL');
+        }
+    });
+    function displayPublicLink(link) {
+        const linkItem = document.createElement('div');
+        linkItem.className = 'item';
+        linkItem.innerHTML = `
+                <p>Original URL: <a href="${link.original_url}" target="_blank">${link.original_url}</a></p>
+                <p>Short URL: <a href="${link.short_code}" target="_blank">${apiUrl}/${link.short_code}</a></p>
+            `;
+        publicLinksContainer.prepend(linkItem);
+    }
+
+
 
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();

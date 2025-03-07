@@ -1,63 +1,160 @@
+# Link - URL Shortener API
 
-# Links
-
-## Description
-Links is a URL shortener service built with Laravel.
+## Introduction
+Link is a Laravel-based URL shortening API that allows users to create, manage, and track shortened links. This document provides an overview of the API endpoints, request validation, and testing setup.
 
 ## Installation
-```sh
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-```
+
+### Prerequisites
+- PHP 8.0+
+- Composer
+- MySQL or SQLite
+- Laravel 9+
+
+### Setup
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/criamond/link.git
+   cd link
+   ```
+2. Install dependencies:
+   ```sh
+   composer install
+   ```
+3. Copy the environment file and configure it:
+   ```sh
+   cp .env.example .env
+   ```
+4. Generate application key:
+   ```sh
+   php artisan key:generate
+   ```
+5. Run database migrations:
+   ```sh
+   php artisan migrate
+   ```
+6. Start the development server:
+   ```sh
+   php artisan serve
+   ```
 
 ## API Endpoints
 
-### Create a link
-```sh
-POST /api/links
-{
-  "short_code": "example123",
-  "url": "https://example.com"
-}
-```
-Creates a new short link.
+### Authentication
+#### Register a new user
+**POST** `/api/register`
+- **Request Body:**
+  ```json
+  {
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "password": "password123",
+    "password_confirmation": "password123"
+  }
+  ```
+- **Validation:**
+    - `name`: required, string, max:255
+    - `email`: required, unique, valid email
+    - `password`: required, min:8, confirmed
 
-### Get all links
-```sh
-GET /api/links
-```
-Returns a list of all stored links.
+#### Login
+**POST** `/api/login`
+- **Request Body:**
+  ```json
+  {
+    "email": "johndoe@example.com",
+    "password": "password123"
+  }
+  ```
+- **Validation:**
+    - `email`: required, valid email
+    - `password`: required
 
-### Get a link by short_code
-```sh
-GET /api/links/{short_code}
-```
-Retrieves data for a specific link.
+### URL Shortening
+#### Create a Shortened Link
+**POST** `/api/links`
+- **Request Body:**
+  ```json
+  {
+    "url": "https://example.com"
+  }
+  ```
+- **Validation:**
+    - `url`: required, valid URL
 
-### Update a link
-```sh
-PUT /api/links/{short_code}
-{
-  "url": "https://new-example.com"
-}
-```
-Updates the URL of an existing short link.
+#### Get All Links for a User
+**GET** `/api/get-all-links/{user_id?}`
+- Retrieves all links belonging to the authenticated user.
+- Can be accessed without `user_id` to fetch links for the logged-in user.
 
-### Delete a link
-```sh
-DELETE /api/links/{short_code}
-```
-Deletes a short link.
+#### Update a Link
+**PUT** `/api/links/{id}`
+- **Request Body:**
+  ```json
+  {
+    "url": "https://new-url.com"
+  }
+  ```
+- **Validation:**
+    - `url`: required, valid URL
 
-### Redirect to full URL
-```sh
-GET /{short_code}
-```
-Redirects the user to the full URL associated with the short code.
+#### Delete a Link
+**DELETE** `/api/links/{id}`
+- **Validation:**
+    - `id`: required, integer, exists in links table
 
-## Testing
+### Password Reset
+#### Request Password Reset Link
+**POST** `/api/password/reset-request`
+- **Request Body:**
+  ```json
+  {
+    "email": "user@example.com"
+  }
+  ```
+- **Validation:**
+    - `email`: required, valid email, exists in users table
+
+#### Reset Password
+**POST** `/api/password/reset`
+- **Request Body:**
+  ```json
+  {
+    "token": "reset-token",
+    "email": "user@example.com",
+    "password": "newpassword",
+    "password_confirmation": "newpassword"
+  }
+  ```
+- **Validation:**
+    - `token`: required, string
+    - `email`: required, valid email, exists in users table
+    - `password`: required, min:8, confirmed
+
+## Validation Requests
+All request validation has been moved to dedicated Laravel FormRequest classes:
+- `app/Http/Requests/UpdateUserRequest.php`
+- `app/Http/Requests/DestroyUserRequest.php`
+- `app/Http/Requests/RegisterUserRequest.php`
+- `app/Http/Requests/VerifyEmailRequest.php`
+- `app/Http/Requests/LoginUserRequest.php`
+- `app/Http/Requests/SendResetLinkRequest.php`
+- `app/Http/Requests/ResetPasswordRequest.php`
+- `app/Http/Requests/StatsRequest.php`
+- `app/Http/Requests/GetAllLinksRequest.php`
+- `app/Http/Requests/UpdateUserLinkRequest.php`
+
+## Running Tests
+To run unit tests, execute:
 ```sh
 php artisan test
 ```
+
+### Available Unit Tests
+Unit tests are located in `tests/Feature/` and `tests/Unit/` directories. They cover:
+- User registration and authentication (`tests/Feature/AuthTest.php`)
+- Link creation, retrieval, updating, and deletion (`tests/Feature/LinkTest.php`)
+- Password reset functionality (`tests/Feature/PasswordResetTest.php`)
+- Validation tests for all request classes (`tests/Unit/ValidationTest.php`)
+
+
