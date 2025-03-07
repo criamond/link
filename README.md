@@ -41,6 +41,11 @@ Link is a Laravel-based URL shortening API that allows users to create, manage, 
    ```sh
    php artisan serve
    ```
+8. Add to cron service run command to delete users with unverified email 
+longer that 10 days ago
+   ```sh
+   php artisan users:clean-unverified
+   ```
 
 ## API Endpoints
 
@@ -88,7 +93,7 @@ Link is a Laravel-based URL shortening API that allows users to create, manage, 
 
 #### Get All Links for a User
 **GET** `/api/links/{user_id?}`
-- Retrieves all links belonging to the authenticated user.
+- Retrieves all links belonging to the authenticated user. In case Admin it will retrive all links
 - Can be accessed without `user_id` to fetch links for the logged-in user.
 
 #### Update a Link
